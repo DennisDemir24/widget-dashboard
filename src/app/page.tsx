@@ -1,101 +1,314 @@
-import Image from "next/image";
+'use client'
+
+import { useState, useCallback } from 'react'
+import { Widget } from '../components/widget'
+import { WidgetLibrary } from '../components/widget-library'
+import { Widget as WidgetType } from '../types/widget'
+
+const consultantsData = [
+  {
+    id: '1',
+    firstName: 'Johan',
+    lastName: 'Hell',
+    status: 'sick',
+    isBooked: true
+  },
+  {
+    id: '2',
+    firstName: 'Maria',
+    lastName: 'Andersson',
+    status: 'active',
+    isBooked: true
+  },
+  {
+    id: '3',
+    firstName: 'Erik',
+    lastName: 'Svensson',
+    status: 'pending_sick',
+    isBooked: true
+  },
+  {
+    id: '4',
+    firstName: 'Anna',
+    lastName: 'Lindberg',
+    status: 'sick',
+    isBooked: false
+  }
+]
+
+const initialWidgets: WidgetType[] = [
+  {
+    id: 'connections-1',
+    type: 'recentConnections',
+    title: 'Nyligen connectade',
+    color: 'bg-gray-800',
+    position: { x: 20, y: 460 },
+    data: {
+      recentConnections: [
+        {
+          id: '1',
+          email: 'dleepmadusanka2@gmail.com',
+          industry: 'Produktion/Industri',
+          time: '12tim',
+          initial: 'D'
+        },
+        {
+          id: '2',
+          email: 'johanhjertqvist@yahoo.com',
+          industry: 'Lager och logistik',
+          time: '3dag',
+          initial: 'J'
+        }
+      ]
+    }
+  },
+  {
+    id: 'highlights-1',
+    type: 'highlights2024',
+    title: 'Dina höjdpunkter från 2024',
+    color: 'bg-indigo-900',
+    position: { x: 390, y: 20 },
+    data: {
+      highlights2024: {
+        message: 'Vi på Teamtailor vill tacka dig på Boxflow för det här året tillsammans med oss. Som en liten present har vi sammanställt dina rekryteringshöjdpunkter från 2024.'
+      }
+    }
+  },
+  {
+    id: 'didyouknow-1',
+    type: 'didYouKnow',
+    title: 'Visste du att...',
+    color: 'bg-blue-600',
+    position: { x: 390, y: 340 },
+    data: {
+      didYouKnow: {
+        message: 'Set time-based goals to reach targets and boost candidate experience with Guided Recruitment '
+      }
+    }
+  },
+  {
+    id: 'integrity-1',
+    type: 'dataIntegrity',
+    title: 'Data och integritet',
+    color: 'bg-red-500',
+    position: { x: 390, y: 460 },
+    data: {
+      dataIntegrity: {
+        deletions: 1,
+        missing: 0
+      }
+    }
+  },
+  {
+    id: 'stats-1',
+    type: 'jobStats',
+    title: 'Jobbstatistik',
+    color: 'bg-emerald-600',
+    position: { x: 760, y: 20 },
+    data: {
+      jobStats: {
+        visits: 5.8,
+        applications: 1.6,
+        connected: 320
+      }
+    }
+  },
+  {
+    id: 'consultants-1',
+    type: 'consultants',
+    title: 'Alla konsulter',
+    color: 'bg-blue-800',
+    position: { x: 20, y: 240 },
+    data: {
+      consultants: consultantsData
+    }
+  },
+  {
+    id: 'booked-sick-1',
+    type: 'bookedSickConsultants',
+    title: 'Bokade sjuka konsulter',
+    color: 'bg-red-800',
+    position: { x: 20, y: 20 },
+    data: {
+      consultants: consultantsData
+    }
+  },
+  /* {
+    id: 'consultants',
+    type: 'consultants',
+    title: 'Tillgängliga konsulter',
+    color: 'bg-gray-800',
+    position: { x: 760, y: 340 },
+    data: {
+      consultants: [
+        { 
+          id: '1',
+          firstName: 'Fredrik',
+          lastName: 'Hjertqvist',
+          status: 'active',
+          isBooked: true
+        },
+        { 
+          id: '2',
+          firstName: 'Fredrik',
+          lastName: 'Flenger',
+          status: 'pending_sick',
+          isBooked: true
+        },
+        { 
+          id: '3',
+          firstName: 'Anders',
+          lastName: 'Hjertqvist',
+          status: 'sick',
+          isBooked: true
+        },
+        { 
+          id: '4',
+          firstName: 'Klara',
+          lastName: 'Hjertqvist',
+          status: 'pending_sick',
+          isBooked: false
+        },
+        { 
+          id: '5',
+          firstName: 'Erik',
+          lastName: 'Hjertqvist',
+          status: 'pending_sick',
+          isBooked: true
+        },
+        { 
+          id: '6',
+          firstName: 'Erik',
+          lastName: 'Eriksson',
+          status: 'active',
+          isBooked: false
+        },
+        { 
+          id: '7',
+          firstName: 'Johan',
+          lastName: 'Hell',
+          status: 'sick',
+          isBooked: true
+        }
+      ]
+    }
+  }, */
+  /* {
+    id: 'booked-sick-1',
+    type: 'bookedSickConsultants',
+    title: 'Bokade sjuka konsulter',
+    color: 'bg-red-800',
+    position: { x: 20, y: 20 },
+    data: {
+      consultants: [
+        {
+          id: '1',
+          firstName: 'Johan',
+          lastName: 'Hell',
+          status: 'sick',
+          isBooked: true
+        }
+      ]
+    }
+  }, */
+]
+
+const widgetTemplates = [
+  { type: 'didYouKnow', title: 'Visste du att...', color: 'bg-blue-600' },
+  { type: 'dataIntegrity', title: 'Data och integritet', color: 'bg-red-500' },
+  { type: 'highlights', title: 'Höjdpunkter', color: 'bg-indigo-900' },
+  { type: 'highlights2024', title: 'Dina höjdpunkter från 2024', color: 'bg-indigo-900' },
+  { type: 'jobStats', title: 'Jobbstatistik', color: 'bg-emerald-600' },
+  { type: 'jobs', title: 'Mina jobb', color: 'bg-gray-800' },
+  { type: 'productUpdates', title: 'Produktuppdateringar', color: 'bg-indigo-600' },
+  { type: 'recentConnections', title: 'Nyligen connectade', color: 'bg-gray-800' },
+  { type: 'consultants', title: 'Tillgängliga konsulter', color: 'bg-gray-800' },
+  { type: 'bookedSickConsultants', title: 'Bokade sjuka konsulter', color: 'bg-gray-800' },
+]
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [widgets, setWidgets] = useState<WidgetType[]>(initialWidgets)
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+  const handleAddWidget = (type: string) => {
+    // Validate that the type is a valid WidgetType
+    const template = widgetTemplates.find(t => t.type === type)
+    if (!template) {
+      console.error(`Invalid widget type: ${type}`)
+      return
+    }
+
+    // Create initial data based on widget type
+    const initialData: Record<string, any> = {}
+    switch (type) {
+      case 'didYouKnow':
+        initialData.didYouKnow = { message: 'Click to edit this tip' }
+        break
+      case 'dataIntegrity':
+        initialData.dataIntegrity = { deletions: 0, missing: 0 }
+        break
+      case 'highlights':
+        initialData.highlights = { message: 'Add your highlight here' }
+        break
+      case 'highlights2024':
+        initialData.highlights2024 = { message: 'Add 2024 highlight here' }
+        break
+      case 'jobStats':
+        initialData.jobStats = { visits: 0, applications: 0, connected: 0 }
+        break
+      case 'recentConnections':
+        initialData.recentConnections = []
+        break
+      case 'jobs':
+        initialData.jobs = { current: 0 }
+        break
+      case 'productUpdates':
+        initialData.productUpdates = { message: 'Add product update here' }
+        break
+    }
+
+    const newWidget: WidgetType = {
+      id: `${type}-${Date.now()}`,
+      type: template.type,
+      title: template.title,
+      color: template.color,
+      position: {
+        x: Math.random() * (window.innerWidth - 320),
+        y: Math.random() * (window.innerHeight - 200)
+      },
+      data: initialData
+    }
+
+    setWidgets(prev => [...prev, newWidget])
+  }
+
+  const handleRemoveWidget = (id: string) => {
+    setWidgets(prev => prev.filter(widget => widget.id !== id))
+  }
+
+  const handlePositionChange = useCallback((id: string, position: { x: number; y: number }) => {
+    setWidgets(prev =>
+      prev.map(widget =>
+        widget.id === id ? { ...widget, position } : widget
+      )
+    )
+  }, [])
+
+  return (
+    <div className="min-h-screen bg-gray-900 text-white">
+      <header className="flex items-center justify-between p-4 border-b border-gray-800">
+        <h1 className="text-2xl font-bold">Välkommen, John </h1>
+        <WidgetLibrary onAddWidget={handleAddWidget} />
+      </header>
+      <main className="relative p-4 h-[calc(100vh-73px)]">
+        {widgets.map(widget => (
+          <Widget
+            key={widget.id}
+            widget={widget}
+            onRemove={handleRemoveWidget}
+            onPositionChange={handlePositionChange}
+          />
+        ))}
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
-  );
+  )
 }
