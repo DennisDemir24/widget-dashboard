@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 interface ConsultantWidgetProps {
       data: Array<{
@@ -13,6 +14,7 @@ interface ConsultantWidgetProps {
 
   
   export function ConsultantWidget({ data }: ConsultantWidgetProps) {
+    const router = useRouter();
     const [selectedStatus, setSelectedStatus] = useState<'all' | 'active' | 'sick' | 'pending_sick'>('all');
   
     const filteredData = data?.filter(consultant => 
@@ -60,6 +62,11 @@ interface ConsultantWidgetProps {
           {filteredData.map((consultant, index) => {
             const initials = `${consultant.firstName[0]}${consultant.lastName[0]}`;
             return (
+              <div 
+              key={index} 
+              className="flex items-center space-x-3 cursor-pointer hover:bg-white/5 p-2 rounded-lg transition-colors" // Add styling for clickable state
+              onClick={() => router.push(`/consultants/${consultant.id}`)} // Add click handler
+            >
               <div key={index} className="flex items-center space-x-3">
                 <div className="relative">
                   <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
@@ -70,6 +77,7 @@ interface ConsultantWidgetProps {
                 <span className="text-white">
                   {consultant.firstName} {consultant.lastName}
                 </span>
+              </div>
               </div>
             );
           })}
