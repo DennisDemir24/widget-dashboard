@@ -34,32 +34,39 @@ export function WidgetLibrary({ onAddWidget }: WidgetLibraryProps) {
           Widget-bibliotek
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[800px]">
         <DialogHeader>
-          <DialogTitle>Add Widget</DialogTitle>
+          <DialogTitle className="text-2xl font-bold">Add Widget</DialogTitle>
+          <p className="text-muted-foreground mt-2">
+            Choose a widget to add to your dashboard. Each widget provides different insights and functionality.
+          </p>
         </DialogHeader>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 p-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
           {widgetTemplates.map((template) => (
             <button
               key={template.id}
               onClick={() => handleAddWidget(template.type)}
               className={cn(
-                'flex flex-col items-center justify-center p-4 rounded-lg transition-colors',
+                'group relative flex flex-col items-center justify-center p-6 rounded-xl transition-all duration-200',
+                'hover:scale-102 hover:shadow-lg',
                 template.color,
-                'hover:opacity-90'
               )}
             >
-              <div className="text-white mb-2">
-                {template.icon === 'Calendar' && <Calendar className="h-6 w-6" />}
-                {template.icon === 'BarChart2' && <BarChart2 className="h-6 w-6" />}
-                {template.icon === 'Bell' && <Bell className="h-6 w-6" />}
-                {template.icon === 'Puzzle' && <Puzzle className="h-6 w-6" />}
-                {template.icon === 'Video' && <Video className="h-6 w-6" />}
-                {template.icon === 'Image' && <Image className="h-6 w-6" />}
+              <div className="text-white mb-3 transform transition-transform group-hover:scale-110">
+                {template.icon === 'Calendar' && <Calendar className="h-8 w-8" />}
+                {template.icon === 'BarChart2' && <BarChart2 className="h-8 w-8" />}
+                {template.icon === 'Bell' && <Bell className="h-8 w-8" />}
+                {template.icon === 'Puzzle' && <Puzzle className="h-8 w-8" />}
+                {template.icon === 'Video' && <Video className="h-8 w-8" />}
+                {template.icon === 'Image' && <Image className="h-8 w-8" />}
               </div>
-              <span className="text-sm font-medium text-white">
+              <span className="text-lg font-semibold text-white mb-2">
                 {template.title}
               </span>
+              <p className="text-sm text-white/80 text-center">
+                {template.description}
+              </p>
+              <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 rounded-xl transition-opacity" />
             </button>
           ))}
         </div>

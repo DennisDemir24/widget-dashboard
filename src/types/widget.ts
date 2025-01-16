@@ -32,7 +32,7 @@ export interface WidgetData {
     applications: number
     connected: number
   }
-    consultants: Array<{
+    consultants?: Array<{
       id: string
       firstName: string
       lastName: string

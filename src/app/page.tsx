@@ -5,7 +5,13 @@ import { Widget } from '../components/widget'
 import { WidgetLibrary } from '../components/widget-library'
 import { Widget as WidgetType } from '../types/widget'
 
-const consultantsData = [
+const consultantsData: {
+  id: string;
+  firstName: string;
+  lastName: string;
+  status: 'active' | 'sick' | 'pending_sick';
+  isBooked: boolean;
+}[] = [
   {
     id: '1',
     firstName: 'Johan',
@@ -230,7 +236,6 @@ export default function Home() {
   const [widgets, setWidgets] = useState<WidgetType[]>(initialWidgets)
 
   const handleAddWidget = (type: string) => {
-    // Validate that the type is a valid WidgetType
     const template = widgetTemplates.find(t => t.type === type)
     if (!template) {
       console.error(`Invalid widget type: ${type}`)
@@ -241,22 +246,49 @@ export default function Home() {
     const initialData: Record<string, any> = {}
     switch (type) {
       case 'didYouKnow':
-        initialData.didYouKnow = { message: 'Click to edit this tip' }
+        initialData.didYouKnow = {
+          message: 'Set time-based goals to reach targets and boost candidate experience with Guided Recruitment'
+        }
         break
       case 'dataIntegrity':
-        initialData.dataIntegrity = { deletions: 0, missing: 0 }
-        break
-      case 'highlights':
-        initialData.highlights = { message: 'Add your highlight here' }
+        initialData.dataIntegrity = {
+          deletions: 1,
+          missing: 0
+        }
         break
       case 'highlights2024':
-        initialData.highlights2024 = { message: 'Add 2024 highlight here' }
+        initialData.highlights2024 = {
+          message: 'Vi på Teamtailor vill tacka dig på Boxflow för det här året tillsammans med oss. Som en liten present har vi sammanställt dina rekryteringshöjdpunkter från 2024.'
+        }
         break
       case 'jobStats':
-        initialData.jobStats = { visits: 0, applications: 0, connected: 0 }
+        initialData.jobStats = {
+          visits: 5.8,
+          applications: 1.6,
+          connected: 320
+        }
         break
       case 'recentConnections':
-        initialData.recentConnections = []
+        initialData.recentConnections = [
+          {
+            id: '1',
+            email: 'dleepmadusanka2@gmail.com',
+            industry: 'Produktion/Industri',
+            time: '12tim',
+            initial: 'D'
+          },
+          {
+            id: '2',
+            email: 'johanhjertqvist@yahoo.com',
+            industry: 'Lager och logistik',
+            time: '3dag',
+            initial: 'J'
+          }
+        ]
+        break
+      case 'consultants':
+      case 'bookedSickConsultants':
+        initialData.consultants = consultantsData
         break
       case 'jobs':
         initialData.jobs = { current: 0 }
